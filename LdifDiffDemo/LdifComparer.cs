@@ -458,6 +458,33 @@ namespace LdifDiffDemo
             {
                 Console.WriteLine($"Entry-level differences: {result.EntryDiffs.Count} entries changed");
                 
+                // Summary of changes
+                var added = result.EntryDiffs.Count(d => d.ChangeType == "Added");
+                var removed = result.EntryDiffs.Count(d => d.ChangeType == "Removed");
+                var modified = result.EntryDiffs.Count(d => d.ChangeType == "Modified");
+                
+                Console.WriteLine($"  - Entries added: {added}");
+                Console.WriteLine($"  - Entries removed: {removed}");
+                Console.WriteLine($"  - Entries modified: {modified}");
+                
+                // Count attribute changes
+                var attributesAdded = result.EntryDiffs
+                    .SelectMany(d => d.AttributeDifferences)
+                    .Count(a => a.StartsWith("  +"));
+                var attributesRemoved = result.EntryDiffs
+                    .SelectMany(d => d.AttributeDifferences)
+                    .Count(a => a.StartsWith("  -"));
+                var attributesModified = result.EntryDiffs
+                    .SelectMany(d => d.AttributeDifferences)
+                    .Count(a => a.StartsWith("  ~"));
+                
+                if (attributesAdded > 0 || attributesRemoved > 0 || attributesModified > 0)
+                {
+                    Console.WriteLine($"  - Attributes added: {attributesAdded}");
+                    Console.WriteLine($"  - Attributes removed: {attributesRemoved}");
+                    Console.WriteLine($"  - Attributes modified: {attributesModified}");
+                }
+                
                 if (!string.IsNullOrEmpty(detailedDiffPath))
                 {
                     var isJsonl = detailedDiffPath.EndsWith(".jsonl", StringComparison.OrdinalIgnoreCase);
