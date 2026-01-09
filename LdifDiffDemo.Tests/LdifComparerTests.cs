@@ -545,5 +545,228 @@ mail: test@example.com
         }
 
         #endregion
+
+        #region PrintComparison Tests
+
+        [Fact]
+        public void PrintComparison_CorrectlyCountsEntriesAddedRemovedModified()
+        {
+            // Arrange
+            var result = new ComparisonResult
+            {
+                IsGood = true,
+                Message = "Test",
+                BaselineStats = new LdifStats(),
+                NewStats = new LdifStats(),
+                EntryDiffs = new List<EntryDiff>
+                {
+                    new EntryDiff { Dn = "cn=user1,dc=example,dc=com", ChangeType = "Added", NewOperations = new List<string> { "Add" }, NewAttrCount = 3 },
+                    new EntryDiff { Dn = "cn=user2,dc=example,dc=com", ChangeType = "Added", NewOperations = new List<string> { "Add" }, NewAttrCount = 2 },
+                    new EntryDiff { Dn = "cn=user3,dc=example,dc=com", ChangeType = "Removed", BaselineOperations = new List<string> { "Delete" }, BaselineAttrCount = 4 },
+                    new EntryDiff { Dn = "cn=user4,dc=example,dc=com", ChangeType = "Modified", BaselineOperations = new List<string> { "Add" }, NewOperations = new List<string> { "Add" }, BaselineAttrCount = 2, NewAttrCount = 3 },
+                    new EntryDiff { Dn = "cn=user5,dc=example,dc=com", ChangeType = "Modified", BaselineOperations = new List<string> { "Modify" }, NewOperations = new List<string> { "Modify" }, BaselineAttrCount = 1, NewAttrCount = 2 }
+                }
+            };
+
+            // Act
+            var originalOut = Console.Out;
+            try
+            {
+                using var consoleOutput = new StringWriter();
+                Console.SetOut(consoleOutput);
+                LdifComparer.PrintComparison(result);
+                var output = consoleOutput.ToString();
+
+                // Assert - entry-level counts
+                Assert.Contains("Entry-level differences: 5 entries changed", output);
+                Assert.Contains("Entries added: 2", output);
+                Assert.Contains("Entries removed: 1", output);
+                Assert.Contains("Entries modified: 2", output);
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
+            }
+        }
+
+        [Fact]
+        public void PrintComparison_AccuratelyCountsAttributesAddedRemovedModified()
+        {
+            // Arrange
+            var result = new ComparisonResult
+            {
+                IsGood = true,
+                Message = "Test",
+                BaselineStats = new LdifStats(),
+                NewStats = new LdifStats(),
+                EntryDiffs = new List<EntryDiff>
+                {
+                    new EntryDiff
+                    {
+                        Dn = "cn=user1,dc=example,dc=com",
+                        ChangeType = "Modified",
+                        AttributeDifferences = new List<string>
+                        {
+                            "  + mail: 1 value(s)",
+                            "  + telephoneNumber: 2 value(s)",
+                            "  - oldAttr: 1 value(s)",
+                            "  ~ cn: 1 → 2 value(s)"
+                        }
+                    },
+                    new EntryDiff
+                    {
+                        Dn = "cn=user2,dc=example,dc=com",
+                        ChangeType = "Modified",
+                        AttributeDifferences = new List<string>
+                        {
+                            "  + sn: 1 value(s)",
+                            "  - description: 3 value(s)",
+                            "  - title: 1 value(s)",
+                            "  ~ givenName: 2 → 1 value(s)"
+                        }
+                    }
+                }
+            };
+
+            // Act
+            var originalOut = Console.Out;
+            try
+            {
+                using var consoleOutput = new StringWriter();
+                Console.SetOut(consoleOutput);
+                LdifComparer.PrintComparison(result);
+                var output = consoleOutput.ToString();
+
+                // Assert - attribute-level counts
+                Assert.Contains("Attributes added: 3", output);
+                Assert.Contains("Attributes removed: 3", output);
+                Assert.Contains("Attributes modified: 2", output);
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
+            }
+        }
+
+        [Fact]
+        public void PrintComparison_DoesNotPrintAttributeSummaryWhenNoAttributeChanges()
+        {
+            // Arrange - entries with differences but no attribute changes
+            var result = new ComparisonResult
+            {
+                IsGood = true,
+                Message = "Test",
+                BaselineStats = new LdifStats(),
+                NewStats = new LdifStats(),
+                EntryDiffs = new List<EntryDiff>
+                {
+                    new EntryDiff
+                    {
+                        Dn = "cn=user1,dc=example,dc=com",
+                        ChangeType = "Added",
+                        NewOperations = new List<string> { "Add" },
+                        NewAttrCount = 3,
+                        AttributeDifferences = new List<string>() // Empty - no attribute differences
+                    },
+                    new EntryDiff
+                    {
+                        Dn = "cn=user2,dc=example,dc=com",
+                        ChangeType = "Removed",
+                        BaselineOperations = new List<string> { "Delete" },
+                        BaselineAttrCount = 2,
+                        AttributeDifferences = new List<string>() // Empty
+                    }
+                }
+            };
+
+            // Act
+            var originalOut = Console.Out;
+            try
+            {
+                using var consoleOutput = new StringWriter();
+                Console.SetOut(consoleOutput);
+                LdifComparer.PrintComparison(result);
+                var output = consoleOutput.ToString();
+
+                // Assert - attribute summary should NOT appear
+                Assert.DoesNotContain("Attributes added:", output);
+                Assert.DoesNotContain("Attributes removed:", output);
+                Assert.DoesNotContain("Attributes modified:", output);
+                
+                // But entry-level summary should still be present
+                Assert.Contains("Entry-level differences: 2 entries changed", output);
+                Assert.Contains("Entries added: 1", output);
+                Assert.Contains("Entries removed: 1", output);
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
+            }
+        }
+
+        [Fact]
+        public void PrintComparison_HandlesEmptyEntryDiffsList()
+        {
+            // Arrange
+            var result = new ComparisonResult
+            {
+                IsGood = true,
+                Message = "Test - no differences",
+                BaselineStats = new LdifStats { TotalEntries = 10, TotalAttributes = 50 },
+                NewStats = new LdifStats { TotalEntries = 10, TotalAttributes = 50 },
+                EntryDiffs = new List<EntryDiff>() // Empty list
+            };
+
+            // Act & Assert - should not throw
+            var originalOut = Console.Out;
+            try
+            {
+                using var consoleOutput = new StringWriter();
+                Console.SetOut(consoleOutput);
+                var exception = Record.Exception(() => LdifComparer.PrintComparison(result));
+                
+                Assert.Null(exception);
+                
+                var output = consoleOutput.ToString();
+                Assert.DoesNotContain("Entry-level differences:", output);
+                Assert.DoesNotContain("Entries added:", output);
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
+            }
+        }
+
+        [Fact]
+        public void PrintComparison_HandlesNullEntryDiffsList()
+        {
+            // Arrange
+            var result = new ComparisonResult
+            {
+                IsGood = true,
+                Message = "Test - null list",
+                BaselineStats = new LdifStats { TotalEntries = 10, TotalAttributes = 50 },
+                NewStats = new LdifStats { TotalEntries = 10, TotalAttributes = 50 },
+                EntryDiffs = null! // Null list
+            };
+
+            // Act & Assert - should throw NullReferenceException
+            var originalOut = Console.Out;
+            try
+            {
+                using var consoleOutput = new StringWriter();
+                Console.SetOut(consoleOutput);
+                
+                // In the current implementation, this will throw NullReferenceException
+                // This test documents the current behavior
+                Assert.Throws<NullReferenceException>(() => LdifComparer.PrintComparison(result));
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
+            }
+        }
+
+        #endregion
     }
 }
