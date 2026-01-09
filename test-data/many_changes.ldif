@@ -1,0 +1,192 @@
+version: 1
+
+dn: cn=User01,OU=Users,DC=example,DC=com
+changetype: add
+objectClass: inetOrgPerson
+cn: User01
+sn: LastName01
+givenName: FirstName01
+mail: user01@example.com
+
+dn: cn=User02,OU=Users,DC=example,DC=com
+changetype: add
+objectClass: inetOrgPerson
+cn: User02
+sn: LastName02
+givenName: FirstName02
+mail: user02@example.com
+
+dn: cn=User03,OU=Users,DC=example,DC=com
+changetype: add
+objectClass: inetOrgPerson
+cn: User03
+sn: LastName03
+givenName: FirstName03
+mail: user03@example.com
+
+dn: cn=User04,OU=Users,DC=example,DC=com
+changetype: add
+objectClass: inetOrgPerson
+cn: User04
+sn: LastName04
+givenName: FirstName04
+mail: user04@example.com
+
+dn: cn=User05,OU=Users,DC=example,DC=com
+changetype: add
+objectClass: inetOrgPerson
+cn: User05
+sn: LastName05
+givenName: FirstName05
+mail: user05@example.com
+
+dn: cn=User06,OU=Users,DC=example,DC=com
+changetype: add
+objectClass: inetOrgPerson
+cn: User06
+sn: LastName06
+givenName: FirstName06
+mail: user06@example.com
+
+dn: cn=User07,OU=Users,DC=example,DC=com
+changetype: add
+objectClass: inetOrgPerson
+cn: User07
+sn: LastName07
+givenName: FirstName07
+mail: user07@example.com
+
+dn: cn=User08,OU=Users,DC=example,DC=com
+changetype: add
+objectClass: inetOrgPerson
+cn: User08
+sn: LastName08
+givenName: FirstName08
+mail: user08@example.com
+
+dn: cn=User09,OU=Users,DC=example,DC=com
+changetype: add
+objectClass: inetOrgPerson
+cn: User09
+sn: LastName09
+givenName: FirstName09
+mail: user09@example.com
+
+dn: cn=User10,OU=Users,DC=example,DC=com
+changetype: add
+objectClass: inetOrgPerson
+cn: User10
+sn: LastName10
+givenName: FirstName10
+mail: user10@example.com
+
+dn: cn=User01,OU=Users,DC=example,DC=com
+changetype: modify
+replace: mail
+mail: user01.updated@example.com
+-
+add: telephoneNumber
+telephoneNumber: +1 555 100001
+-
+delete: description
+-
+
+dn: cn=User02,OU=Users,DC=example,DC=com
+changetype: modify
+replace: mail
+mail: user02.updated@example.com
+-
+add: telephoneNumber
+telephoneNumber: +1 555 100002
+-
+delete: description
+-
+
+dn: cn=User03,OU=Users,DC=example,DC=com
+changetype: modify
+replace: mail
+mail: user03.updated@example.com
+-
+add: telephoneNumber
+telephoneNumber: +1 555 100003
+-
+delete: description
+-
+
+dn: cn=User04,OU=Users,DC=example,DC=com
+changetype: modify
+replace: mail
+mail: user04.updated@example.com
+-
+add: telephoneNumber
+telephoneNumber: +1 555 100004
+-
+delete: description
+-
+
+dn: cn=User05,OU=Users,DC=example,DC=com
+changetype: modify
+replace: mail
+mail: user05.updated@example.com
+-
+add: telephoneNumber
+telephoneNumber: +1 555 100005
+-
+delete: description
+-
+
+dn: cn=User06,OU=Users,DC=example,DC=com
+changetype: modify
+replace: mail
+mail: user06.updated@example.com
+-
+add: telephoneNumber
+telephoneNumber: +1 555 100006
+-
+delete: description
+-
+
+dn: cn=User07,OU=Users,DC=example,DC=com
+changetype: modify
+replace: mail
+mail: user07.updated@example.com
+-
+add: telephoneNumber
+telephoneNumber: +1 555 100007
+-
+delete: description
+-
+
+dn: cn=User08,OU=Users,DC=example,DC=com
+changetype: modify
+replace: mail
+mail: user08.updated@example.com
+-
+add: telephoneNumber
+telephoneNumber: +1 555 100008
+-
+delete: description
+-
+
+dn: cn=User09,OU=Users,DC=example,DC=com
+changetype: modify
+replace: mail
+mail: user09.updated@example.com
+-
+add: telephoneNumber
+telephoneNumber: +1 555 100009
+-
+delete: description
+-
+
+dn: cn=User10,OU=Users,DC=example,DC=com
+changetype: modify
+replace: mail
+mail: user10.updated@example.com
+-
+add: telephoneNumber
+telephoneNumber: +1 555 100010
+-
+delete: description
+-
+

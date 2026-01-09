@@ -1,0 +1,30 @@
+version: 1
+
+dn: cn=User04,OU=Users,DC=example,DC=com
+changetype: add
+objectClass: inetOrgPerson
+cn: User04
+sn: TestUser
+mail: user04@example.com
+
+dn: cn=User02,OU=Users,DC=example,DC=com
+changetype: add
+objectClass: inetOrgPerson
+cn: User02
+sn: TestUser
+mail: user02@example.com
+
+dn: cn=User01,OU=Users,DC=example,DC=com
+changetype: add
+objectClass: inetOrgPerson
+cn: User01
+sn: TestUser
+mail: user01@example.com
+
+dn: cn=User03,OU=Users,DC=example,DC=com
+changetype: add
+objectClass: inetOrgPerson
+cn: User03
+sn: TestUser
+mail: user03@example.com
+
